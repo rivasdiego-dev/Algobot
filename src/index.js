@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import { Client, IntentsBitField } from "discord.js";
+import { commandsDefinitions } from "./lib/commands.js";
 
 const apiToken = process.env.API_TOKEN;
 const usedCommands = new Map();
@@ -29,33 +30,21 @@ bot.on("interactionCreate", async (interaction) => {
 
   console.log({ commandName, userId });
 
-  switch (commandName) {
-    case "apodo":
-      if (usedCommands.has(userId))
-        await interaction.reply("You've already used this command!");
-      else {
-        await interaction.reply("Apodo info!");
-        usedCommands.set(userId, true);
-      }
-      break;
-    case "curso":
-      if (usedCommands.has(userId))
-        await interaction.reply("You've already used this command!");
-      else {
-        await interaction.reply("Curso info.");
-        usedCommands.set(userId, true);
-      }
-      break;
-    case "soy":
-      if (usedCommands.has(userId))
-        await interaction.reply("You've already used this command!");
-      else {
-        await interaction.reply("User info.");
-        usedCommands.set(userId, true);
-      }
-      break;
-    default:
-      break;
+  if (usedCommands.has(`${userId}-${commandName}`)) {
+    await interaction.reply(`You've already used the ${commandName} command!`);
+  } else {
+    await interaction.reply(commandsDefinitions[commandName](interaction.options));
+    usedCommands.set(`${userId}-${commandName}`, true);
+  }
+});
+
+bot.on("messageCreate", (message) => {
+  // Verificar si el mensaje es en "Welcome"
+  if (message.channel.id === process.env.WELCOME_CHANNEL_ID) {
+    setTimeout(() => {
+      // Intentar eliminar el mensaje (puede fallar si el mensaje ya se eliminó)
+      message.delete().catch((error) => console.error(`Error al eliminar el mensaje: ${error}`));
+    }, (1 * 60000)); // Minutos en milisegundos
   }
 });
 
