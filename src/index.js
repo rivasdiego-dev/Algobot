@@ -1,13 +1,9 @@
-import dotenv from "dotenv";
-dotenv.config();
+require('dotenv').config();
 
-import { Client, IntentsBitField } from "discord.js";
-import { commandsDefinitions } from "./lib/commands.js";
+const { Client, IntentsBitField } = require('discord.js');
+const eventHandler = require("./handlers/eventHandler");
 
-const apiToken = process.env.API_TOKEN;
-const usedCommands = new Map();
-
-const bot = new Client({
+const client = new Client({
   intents: [
     IntentsBitField.Flags.Guilds,
     IntentsBitField.Flags.GuildMembers,
@@ -16,9 +12,13 @@ const bot = new Client({
   ],
 });
 
-bot.login(apiToken);
 
-bot.on("ready", (b) => {
+eventHandler(client);
+
+
+client.login(process.env.API_TOKEN);
+
+/* bot.on("ready", (b) => {
   console.log(` ${b.user.tag} is ready!\nConnected to ${b.guilds.cache.size} server(s):\n`, b.guilds.cache.map((g) => ("- " + g.name)).join("\n"));
 });
 
@@ -46,9 +46,9 @@ bot.on("messageCreate", (message) => {
       message.delete().catch((error) => console.error(`Error al eliminar el mensaje: ${error}`));
     }, (1 * 60000)); // Minutos en milisegundos
   }
-});
+}); 
 
-/* bot.on("guildMemberAdd", async (member) => {
+ bot.on("guildMemberAdd", async (member) => {
   const defaultRole = member.guild.roles.cache.find(role => role.name === "Member");
   if (defaultRole) {
     member.roles.add(defaultRole);
