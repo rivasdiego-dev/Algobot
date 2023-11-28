@@ -12,13 +12,13 @@ module.exports = (directory, foldersOnly = false) => {
         if (foldersOnly) {
             if (file.isDirectory()) {
                 fileNames.push(filePath);
-            } else {
-                if (file.isFile()) {
-                    fileNames.push(filePath);
-                }
+            }
+        } else {
+            if (file.isFile()) {
+                fileNames.push(filePath);
             }
         }
     }
 
     return fileNames;
-}
+};
