@@ -18,11 +18,8 @@ eventHandler(client);
 
 client.login(process.env.API_TOKEN);
 
-/* bot.on("ready", (b) => {
-  console.log(` ${b.user.tag} is ready!\nConnected to ${b.guilds.cache.size} server(s):\n`, b.guilds.cache.map((g) => ("- " + g.name)).join("\n"));
-});
-
-bot.on("interactionCreate", async (interaction) => {
+/* 
+  bot.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
 
   const { commandName } = interaction;
@@ -60,19 +57,4 @@ bot.on("messageCreate", (message) => {
   }
 });
 
-bot.on("ready", async () => {
-  const server = await bot.guilds.fetch(serverID);
-  if (server) {
-    server.channels.fetch()
-      .then(channels => {
-        console.log(`Found ${channels.size} channels on server ${server.name}`);
-        channels.forEach(channel => {
-          console.log(`Channel name: ${channel.name}, type: ${channel.type}, ID: ${channel.id}`);
-        });
-      })
-      .catch(console.error);
-  } else {
-    console.log(`No server found with ID: ${serverID}`);
-  }
-});
  */
