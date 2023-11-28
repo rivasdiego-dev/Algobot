@@ -18,6 +18,7 @@ module.exports = {
         }
     ],
     permissionsRequired: [PermissionFlagsBits.Administrator],
+    botRequired: [PermissionFlagsBits.Administrator],
 
     callback: async (client, interaction) => {
         interaction.reply('Banned');
