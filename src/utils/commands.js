@@ -1,6 +1,6 @@
-import { ApplicationCommandOptionType } from "discord.js";
+const { ApplicationCommandOptionType } = require('discord-api-types/v9');
 
-export const commands = [
+module.exports = commands = [
     {
         name: 'soy',
         description: 'Selecciona tu nombre en el servidor',
@@ -63,7 +63,7 @@ export const commands = [
     },
 ];
 
-export const commandsDefinitions = {
+module.exports = commandsDefinitions = {
     soy: (options) => {
         const nombre = options.get('nombre').value;
         const apellido = options.get('apellido').value;
