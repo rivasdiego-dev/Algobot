@@ -1,19 +1,50 @@
-const { commandsDefinitions } = require("../../utils/commands");
+const { ApplicationCommandOptionType } = require('discord-api-types/v9');
+const getLocalCommands = require('../../utils/getLocalCommands');
 
 let usedCommands = new Map();
 
 module.exports = async (client, interaction) => {
     if (!interaction.isCommand()) return;
 
+    const localCommands = getLocalCommands();
+
+    try {
+        const commandObject = localCommands.find((cmd) => cmd.name === interaction.commandName);
+        if (!commandObject) return;
+
+        if (commandObject.permissionsRequired?.length) {
+            for (const permission of commandObject.permissionsRequired) {
+                if (!interaction.member.permissions.has(permission)) {
+                    interaction.reply({
+                        content: 'Not enough permissions.',
+                        ephemeral: true,
+                    });
+                    return;
+                }
+            }
+        }
+
+        if (commandObject.botPermissions?.length) {
+            for (const permission of commandObject.botPermissions) {
+                const bot = interaction.guild.members.me;
+
+                if (!bot.permissions.has(permission)) {
+                    interaction.reply({
+                        content: "I don't have enough permissions.",
+                        ephemeral: true,
+                    });
+                    return;
+                }
+            }
+        }
+
+        await commandObject.callback(client, interaction);
+
+    } catch (error) {
+        console.log(`There was an error running the command: ${error}`);
+    }
+
     const { commandName } = interaction;
     const userId = interaction.user.id;
-
     console.log({ commandName, userId });
-
-    if (usedCommands.has(`${userId}-${commandName}`)) {
-        await interaction.reply(`You've already used the ${commandName} command!`);
-    } else {
-        await interaction.reply(commandsDefinitions[commandName](interaction.options));
-        usedCommands.set(`${userId}-${commandName}`, true);
-    }
 }
