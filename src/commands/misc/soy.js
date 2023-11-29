@@ -29,7 +29,7 @@ module.exports = {
             })
             .catch((error) => {
                 console.error(error);
-                interaction.reply({ content: 'Ha ocurrido un error al cambiar el nombre... Ponte en contacto con un profesor', ephemeral: true });
+                interaction.reply({ content: 'Ha ocurrido un error al cambiar el nombre... Ponte en contacto con un profesor:(', ephemeral: true });
             });
     },
 }

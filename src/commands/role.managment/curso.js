@@ -31,8 +31,21 @@ module.exports = {
         },
     ],
 
-    callback: (client, interaction) => {
+    callback: async (client, interaction) => {
         const curso = interaction.options.get('curso').value;
-        interaction.reply({ content: `Tu curso es ${curso}`, ephemeral: true });
+
+        let guild = interaction.guild;
+        const roles = guild.roles.cache;
+        const role = roles.find((role) => role.id === curso);
+
+        const variant = {
+            '1178579856762613861': '\n\n¡Hora de programar en Python!',
+            '1178599648718487552': '\n\n¡Disfruta del curso de Front End!',
+            '1178599785062748171': '\n\n¡Diviértete en el curso de Unity!',
+            '1178599811080011836': '\n\n¡Deja volar tu imaginación en el curso de Roblox!',
+        }
+
+        await interaction.member.roles.add(role);
+        interaction.reply({ content: `Ahora estás en el curso de ${role}. ${variant[curso]}`, ephemeral: true });
     },
 }
