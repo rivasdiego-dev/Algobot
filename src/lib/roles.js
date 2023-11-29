@@ -19,11 +19,5 @@ const commandsDefinitions = {
 
 };
 
-if (commandName !== 'apodo' && usedCommands.has(`${userId}-${commandName}`))
-    await interaction.reply(`Lo siento, ya utilizaste el comando '/${commandName}'. Si quieres volverlo a usar, contacta a un profesor.`);
-else {
-    await interaction.reply(commandsDefinitions[commandName](interaction.options));
-    if (commandName !== 'apodo') usedCommands.set(`${userId}-${commandName}`, true);
-}
 
 export default rolesID;

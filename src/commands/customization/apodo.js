@@ -1,3 +1,5 @@
+const { ApplicationCommandOptionType } = require('discord-api-types/v9');
+
 module.exports = {
     // deleted: true,
     name: 'apodo',

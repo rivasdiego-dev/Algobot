@@ -1,3 +1,6 @@
+require('dotenv').config();
+const { ApplicationCommandOptionType } = require('discord-api-types/v9');
+
 module.exports = {
     name: 'curso',
     description: 'Selecciona el curso al que perteneces"',
@@ -28,9 +31,8 @@ module.exports = {
         },
     ],
 
-    callback: (options) => {
-        const curso = options.get('curso').value;
-
-        return `Tu curso es ${curso}`;
+    callback: (client, interaction) => {
+        const curso = interaction.options.get('curso').value;
+        interaction.reply({ content: `Tu curso es ${curso}`, ephemeral: true });
     },
 }
