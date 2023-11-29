@@ -1,6 +1,6 @@
 const { ApplicationCommandOptionType } = require('discord-api-types/v9');
 
-const successMesaages = [
+const successMessages = [
     "¡Tu nickname es tan original y creativo! 💡",
     "Me encanta cómo has elegido tu nickname, ¡es único y genial! 🌟",
     "¡Tu nickname es la combinación perfecta de estilo y personalidad! 👌",
@@ -13,9 +13,8 @@ const successMesaages = [
 ]
 
 module.exports = {
-    // deleted: true,
     name: 'apodo',
-    description: 'Dinos como te gusta que te llamemos',
+    description: 'Dinos cómo te gusta que te llamemos',
     options: [
         {
             name: 'apodo',
@@ -25,29 +24,31 @@ module.exports = {
         },
     ],
 
-    callback: (client, interaction) => {
+    callback: async (client, interaction) => {
         try {
             const nickname = interaction.options.get('apodo').value;
             const member = interaction.member;
-            const fullName = member.nickname;
+            const fullName = member.nickname || member.user.username; // Use username if no nickname
             const posicion = fullName.indexOf("(");
 
-            const randomIndex = Math.floor(Math.random() * successMesaages.length);
-            const successMessage = successMesaages[randomIndex];
+            const randomIndex = Math.floor(Math.random() * successMessages.length);
+            const successMessage = successMessages[randomIndex];
 
-            let newNick = fullName;
+            let newNick;
 
-            if (posicion === -1)
-                newNick = `${fullName} (${nickname})`
-            else
-                newNick = `${fullName.substring(0, posicion - 1)} (${nickname})`
+            if (posicion === -1) {
+                newNick = `${fullName} (${nickname})`;
+            } else {
+                newNick = `${fullName.substring(0, posicion - 1)} (${nickname})`;
+            }
 
-            member.setNickname(newNick)
+            await member.setNickname(newNick);
 
             interaction.reply({ content: `${successMessage}\n\n Ahora tendrás el apodo de ${nickname} ✨`, ephemeral: true });
 
         } catch (error) {
-            interaction.reply({ content: `Error al ejecutar el comando: ${error}. Ponte en contacto con un profesor :(`, ephemeral: true });
+            console.error(`Error executing the command: ${error}`);
+            interaction.reply({ content: 'Ocurrió un error al cambiar el apodo. Ponte en contacto con un profesor :(', ephemeral: true });
         }
     },
-}
+};
