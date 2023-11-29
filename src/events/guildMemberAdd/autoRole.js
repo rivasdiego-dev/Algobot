@@ -6,12 +6,16 @@
  */
 module.exports = async (client, member) => {
     try {
-        let guild = member.guild;
-        const roles = guild.roles.cache;
-        const role = roles.find((role) => role.name === 'Estudiante');
-        await member.roles.add(role); // Fix: Use member.roles.add() to add the role to the member
+        const guild = member.guild; // Use const instead of let for immutability
+        const role = guild.roles.cache.find((role) => role.name === 'Estudiante'); // Simplify role finding
+
+        if (role) {
+            await member.roles.add(role); // Use member.roles.add() to add the role to the member
+        } else {
+            console.error("Role 'Estudiante' not found in the guild."); // Log an error if the role is not found
+        }
 
     } catch (error) {
-        console.error(error); // Fix: Log the error for debugging purposes
+        console.error(error); // Log the error for debugging purposes
     }
 };
