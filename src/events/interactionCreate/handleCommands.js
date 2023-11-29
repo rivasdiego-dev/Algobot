@@ -7,58 +7,47 @@ module.exports = async (client, interaction) => {
     if (!interaction.isCommand()) return;
 
     const localCommands = getLocalCommands();
+    const { commandName } = interaction;
+    const userId = interaction.user.id;
 
     try {
-        const commandObject = localCommands.find((cmd) => cmd.name === interaction.commandName);
+        const commandObject = localCommands.find((cmd) => cmd.name === commandName);
         if (!commandObject) return;
 
-        if (commandObject.permissionsRequired?.length) {
-            for (const permission of commandObject.permissionsRequired) {
-                if (!interaction.member.permissions.has(permission)) {
-                    interaction.reply({
-                        content: 'Not enough permissions.',
-                        ephemeral: true,
-                    });
-                    return;
-                }
+        const checkPermissions = (permissions, errorMessage) => {
+            if (permissions?.length && !permissions.every((permission) => interaction.member.permissions.has(permission))) {
+                interaction.reply({
+                    content: errorMessage,
+                    ephemeral: true,
+                });
+                return false;
             }
-        }
+            return true;
+        };
 
-        if (commandObject.botPermissions?.length) {
-            for (const permission of commandObject.botPermissions) {
-                const bot = interaction.guild.members.me;
+        if (!checkPermissions(commandObject.permissionsRequired, 'Not enough permissions.')) return;
+        if (!checkPermissions(commandObject.botPermissions, "I don't have enough permissions.")) return;
 
-                if (!bot.permissions.has(permission)) {
-                    interaction.reply({
-                        content: "I don't have enough permissions.",
-                        ephemeral: true,
-                    });
-                    return;
-                }
-            }
-        }
-
-        const { commandName } = interaction;
-        const userId = interaction.user.id;
         const roles = interaction.member.roles.cache.map(role => role.name);
 
         if (commandName === 'reset-commands') {
-            if (roles.includes('Profesor'))
-                usedCommands = resetCommands(usedCommands, interaction.options.get('usuario').value)
-            else
+            if (roles.includes('Profesor')) {
+                usedCommands = resetCommands(usedCommands, interaction.options.get('usuario').value);
+            } else {
                 await interaction.reply({ content: `No tienes permisos para usar este comando.`, ephemeral: true });
+                return;
+            }
         }
 
-
-        if (commandName !== 'apodo' && usedCommands.has(`${userId}-${commandName}`))
+        if (commandName !== 'apodo' && commandName !== 'reset-commands' && usedCommands.has(`${userId}-${commandName}`)) {
             await interaction.reply({ content: `Lo siento, ya utilizaste el comando '/${commandName}'. Si quieres volverlo a usar, contacta a un profesor.`, ephemeral: true });
-        else {
+        } else {
             await commandObject.callback(client, interaction);
-            if (commandName !== 'apodo' || commandName !== 'reset-commands') usedCommands.set(`${userId}-${commandName}`, true);
+            if (commandName !== 'apodo' && commandName !== 'reset-commands') usedCommands.set(`${userId}-${commandName}`, true);
         }
-
 
     } catch (error) {
-        console.log({ content: `Error al ejecutar el comando: ${error}`, ephemeral: true });
+        console.error(`Error al ejecutar el comando: ${error}`);
+        interaction.reply({ content: 'Ha ocurrido un error al ejecutar el comando.', ephemeral: true });
     }
-}
+};
