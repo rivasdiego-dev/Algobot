@@ -50,6 +50,6 @@ module.exports = async (client, interaction) => {
         console.error(`Error al ejecutar el comando: ${error}`);
         interaction.reply({ content: 'Ha ocurrido un error al ejecutar el comando.', ephemeral: true });
     } finally {
-        console.log(`User ${userId} used command ${commandName}`)
+        console.log(`${userId}-${interaction.member.nickname}-${commandName}`)
     }
 };
