@@ -1,6 +1,7 @@
 const { ApplicationCommandOptionType, PermissionFlagsBits } = require('discord-api-types/v9');
 
 module.exports = {
+    deleted: true,
     name: 'ban',
     description: 'Biri biri ban ban',
     options: [
